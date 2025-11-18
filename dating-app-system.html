@@ -1,0 +1,1522 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💕 FindLove - แพลตฟอร์มหาคู่ออนไลน์</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 25%, #ffa8a8 50%, #ffb3ba 75%, #ffc0cb 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        /* === AUTH SECTION === */
+        .auth-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            max-width: 450px;
+            margin: 50px auto;
+            text-align: center;
+        }
+
+        .auth-header {
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            font-size: 80px;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 4px 8px rgba(255, 107, 107, 0.3);
+        }
+
+        .app-title {
+            font-size: 2.2em;
+            font-weight: 700;
+            color: #ff6b6b;
+            margin-bottom: 10px;
+        }
+
+        .app-subtitle {
+            color: #666;
+            font-size: 1.1em;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #ff6b6b;
+            box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(255, 107, 107, 0.5);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #ff6b6b;
+            color: #ff6b6b;
+            box-shadow: none;
+        }
+
+        .btn-outline:hover {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .auth-switch {
+            margin-top: 25px;
+            color: #666;
+        }
+
+        .auth-link {
+            color: #ff6b6b;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .auth-link:hover {
+            color: #ff8e8e;
+        }
+
+        .profile-setup {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .profile-preview {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            color: white;
+            margin: 0 auto 15px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 3px solid #e0e0e0;
+            transition: all 0.3s;
+        }
+
+        .profile-preview:hover {
+            transform: scale(1.05);
+            border-color: #ff6b6b;
+        }
+
+        .profile-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .upload-btn {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .upload-btn:hover {
+            background: #ff8e8e;
+        }
+
+        .alert {
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            font-weight: 600;
+            animation: slideIn 0.3s ease;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* === MAIN APP === */
+        .app-container {
+            display: none;
+        }
+
+        .app-container.active {
+            display: block;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 15px;
+            padding: 20px 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-logo {
+            font-size: 40px;
+        }
+
+        .header-title {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: #ff6b6b;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 15px;
+            background: rgba(255, 107, 107, 0.1);
+            border-radius: 25px;
+            border: 2px solid rgba(255, 107, 107, 0.3);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            overflow: hidden;
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .user-info {
+            font-size: 14px;
+        }
+
+        .user-name {
+            font-weight: 700;
+            color: #333;
+        }
+
+        .user-status {
+            color: #28a745;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .nav-btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .nav-btn.primary {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .nav-btn.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+        }
+
+        .nav-btn.outline {
+            background: transparent;
+            border: 2px solid #ff6b6b;
+            color: #ff6b6b;
+        }
+
+        .nav-btn.outline:hover {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        /* === MAIN CONTENT === */
+        .main-content {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .profiles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .profile-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .profile-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        .profile-photo {
+            width: 100%;
+            height: 350px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .profile-info {
+            padding: 25px;
+        }
+
+        .profile-name {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .profile-age {
+            color: #666;
+            font-size: 16px;
+        }
+
+        .profile-bio {
+            color: #666;
+            line-height: 1.5;
+            margin: 15px 0;
+            font-size: 14px;
+        }
+
+        .profile-tags {
+            display: flex;
+            gap: 8px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        .profile-tag {
+            background: #ffe7f0;
+            color: #c2185b;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .profile-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .like-btn {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
+            color: white;
+        }
+
+        .like-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 107, 107, 0.4);
+        }
+
+        .chat-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .chat-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .skip-btn {
+            background: #6c757d;
+            color: white;
+        }
+
+        .skip-btn:hover {
+            background: #5a6268;
+        }
+
+        .status-indicator {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+        }
+
+        .status-online {
+            background: rgba(40, 167, 69, 0.9);
+            color: white;
+        }
+
+        .status-offline {
+            background: rgba(108, 117, 125, 0.9);
+            color: white;
+        }
+
+        .like-counter {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 107, 107, 0.9);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            backdrop-filter: blur(10px);
+        }
+
+        /* === CHAT SECTION === */
+        .chat-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .chat-modal.active {
+            display: flex;
+        }
+
+        .chat-container {
+            background: white;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
+            color: white;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .chat-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            overflow: hidden;
+        }
+
+        .chat-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .chat-user-info h3 {
+            font-size: 1.1em;
+            margin-bottom: 5px;
+        }
+
+        .chat-user-status {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .close-chat {
+            margin-left: auto;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+
+        .close-chat:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #f8f9fa;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .message.own {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: #ff6b6b;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .message-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .message-content {
+            background: white;
+            padding: 12px 16px;
+            border-radius: 18px;
+            max-width: 70%;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .message.own .message-content {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .message-time {
+            font-size: 11px;
+            color: #999;
+            margin-top: 5px;
+            text-align: center;
+        }
+
+        .chat-input {
+            padding: 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 15px;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .chat-input input:focus {
+            border-color: #ff6b6b;
+        }
+
+        .send-btn {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .send-btn:hover {
+            background: #ff8e8e;
+            transform: scale(1.1);
+        }
+
+        /* === FILTER SECTION === */
+        .filter-section {
+            margin-bottom: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .filter-label {
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .filter-select {
+            padding: 8px 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #ff6b6b;
+        }
+
+        .search-bar {
+            flex: 1;
+            max-width: 300px;
+            padding: 10px 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            font-size: 14px;
+            background: white;
+        }
+
+        .search-bar:focus {
+            outline: none;
+            border-color: #ff6b6b;
+        }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+                padding: 20px;
+            }
+
+            .header-right {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .profiles-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .filter-section {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .chat-container {
+                width: 95%;
+                height: 90vh;
+            }
+
+            .auth-container {
+                margin: 20px;
+                padding: 30px 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Section -->
+    <div id="loginSection" class="auth-container">
+        <div class="auth-header">
+            <div class="logo">💕</div>
+            <h1 class="app-title">FindLove</h1>
+            <p class="app-subtitle">แพลตฟอร์มหาคู่ออนไลน์ที่ดีที่สุด</p>
+        </div>
+
+        <div class="alert" id="loginAlert"></div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label class="form-label">👤 ชื่อผู้ใช้หรืออีเมล</label>
+                <input type="text" id="loginUsername" class="form-input" placeholder="กรอกชื่อผู้ใช้หรืออีเมล" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">🔑 รหัสผ่าน</label>
+                <input type="password" id="loginPassword" class="form-input" placeholder="กรอกรหัสผ่าน" required>
+            </div>
+
+            <button type="submit" class="btn">💕 เข้าสู่ระบบ</button>
+        </form>
+
+        <div class="auth-switch">
+            <p>ยังไม่มีบัญชี? <span class="auth-link" onclick="showRegister()">สมัครสมาชิก</span></p>
+        </div>
+    </div>
+
+    <!-- Register Section -->
+    <div id="registerSection" class="auth-container" style="display: none;">
+        <div class="auth-header">
+            <div class="logo">💕</div>
+            <h1 class="app-title">สมัครสมาชิก</h1>
+            <p class="app-subtitle">เข้าร่วมกับเราและพบเจอคนที่ใช่</p>
+        </div>
+
+        <div class="alert" id="registerAlert"></div>
+
+        <form id="registerForm">
+            <div class="profile-setup">
+                <div id="regProfilePreview" class="profile-preview" onclick="document.getElementById('regProfilePic').click()">
+                    👤
+                </div>
+                <input type="file" id="regProfilePic" accept="image/*" style="display: none;">
+                <button type="button" class="upload-btn" onclick="document.getElementById('regProfilePic').click()">
+                    📷 เลือกรูปโปรไฟล์
+                </button>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">👤 ชื่อ-นามสกุล</label>
+                <input type="text" id="regFullName" class="form-input" placeholder="กรอกชื่อ-นามสกุล" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">🏷️ ชื่อผู้ใช้</label>
+                <input type="text" id="regUsername" class="form-input" placeholder="กรอกชื่อผู้ใช้" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">🎂 อายุ</label>
+                <input type="number" id="regAge" class="form-input" placeholder="อายุของคุณ" min="18" max="100" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">🚻 เพศ</label>
+                <select id="regGender" class="form-input" required onchange="updateRegProfileIcon()">
+                    <option value="">-- เลือกเพศ --</option>
+                    <option value="male">👨 ผู้ชาย</option>
+                    <option value="female">👩 ผู้หญิง</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">📧 อีเมล</label>
+                <input type="email" id="regEmail" class="form-input" placeholder="กรอกอีเมล" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">💭 เกี่ยวกับตัวคุณ</label>
+                <input type="text" id="regBio" class="form-input" placeholder="บอกอะไรเกี่ยวกับตัวคุณบ้าง..." required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">💖 สนใจเพศ</label>
+                <select id="regInterest" class="form-input" required>
+                    <option value="">-- เลือกความสนใจ --</option>
+                    <option value="male">👨 ผู้ชาย</option>
+                    <option value="female">👩 ผู้หญิง</option>
+                    <option value="both">👫 ทั้งหมด</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">🔑 รหัสผ่าน</label>
+                <input type="password" id="regPassword" class="form-input" placeholder="สร้างรหัสผ่าน" required minlength="6">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">🔑 ยืนยันรหัสผ่าน</label>
+                <input type="password" id="regConfirmPassword" class="form-input" placeholder="ยืนยันรหัสผ่าน" required>
+            </div>
+
+            <button type="submit" class="btn">💕 สมัครสมาชิก</button>
+        </form>
+
+        <div class="auth-switch">
+            <p>มีบัญชีแล้ว? <span class="auth-link" onclick="showLogin()">เข้าสู่ระบบ</span></p>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="appContainer" class="app-container">
+        <div class="container">
+            <!-- Header -->
+            <div class="header">
+                <div class="header-left">
+                    <div class="header-logo">💕</div>
+                    <div>
+                        <div class="header-title">FindLove</div>
+                    </div>
+                </div>
+
+                <div class="header-right">
+                    <div class="user-profile">
+                        <div class="user-avatar" id="headerAvatar">👤</div>
+                        <div class="user-info">
+                            <div class="user-name" id="displayName">ผู้ใช้</div>
+                            <div class="user-status">🟢 ออนไลน์</div>
+                        </div>
+                    </div>
+                    <button class="nav-btn outline" onclick="openProfile()">⚙️ โปรไฟล์</button>
+                    <button class="nav-btn primary" onclick="logout()">🚪 ออกจากระบบ</button>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="main-content">
+                <div class="alert" id="appAlert"></div>
+
+                <h2 style="color: #ff6b6b; margin-bottom: 10px;">💕 ค้นหาเพื่อนและคู่ครอง</h2>
+                <p style="color: #666; margin-bottom: 25px;">พบกับคนที่ใช่สำหรับคุณ เริ่มการผจญภัยรักใหม่กันเถอะ!</p>
+
+                <!-- Filter Section -->
+                <div class="filter-section">
+                    <div class="filter-group">
+                        <label class="filter-label">🚻 เพศ:</label>
+                        <select id="filterGender" class="filter-select" onchange="filterProfiles()">
+                            <option value="">ทั้งหมด</option>
+                            <option value="male">ผู้ชาย</option>
+                            <option value="female">ผู้หญิง</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label class="filter-label">🎂 อายุ:</label>
+                        <select id="filterAge" class="filter-select" onchange="filterProfiles()">
+                            <option value="">ทุกช่วงอายุ</option>
+                            <option value="18-25">18-25 ปี</option>
+                            <option value="26-35">26-35 ปี</option>
+                            <option value="36-45">36-45 ปี</option>
+                            <option value="46+">46+ ปี</option>
+                        </select>
+                    </div>
+
+                    <input type="text" id="searchBar" class="search-bar" placeholder="🔍 ค้นหาชื่อ..." oninput="filterProfiles()">
+                </div>
+
+                <!-- Profiles Grid -->
+                <div class="profiles-grid" id="profilesGrid"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat Modal -->
+    <div class="chat-modal" id="chatModal">
+        <div class="chat-container">
+            <div class="chat-header">
+                <div class="chat-avatar" id="chatAvatar">👤</div>
+                <div class="chat-user-info">
+                    <h3 id="chatUserName">ผู้ใช้</h3>
+                    <div class="chat-user-status" id="chatUserStatus">🟢 ออนไลน์</div>
+                </div>
+                <button class="close-chat" onclick="closeChat()">&times;</button>
+            </div>
+
+            <div class="chat-messages" id="chatMessages">
+                <!-- Messages will be dynamically loaded here -->
+            </div>
+
+            <div class="chat-input">
+                <input type="text" id="messageInput" placeholder="พิมพ์ข้อความ..." onkeypress="handleEnterMessage(event)">
+                <button class="send-btn" onclick="sendMessage()">📤</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========== GLOBAL VARIABLES ==========
+        let users = JSON.parse(localStorage.getItem('dating_users') || '[]');
+        let profiles = JSON.parse(localStorage.getItem('dating_profiles') || '[]');
+        let chats = JSON.parse(localStorage.getItem('dating_chats') || '{}');
+        let currentUser = null;
+        let regProfilePicData = null;
+        let currentChatUser = null;
+
+        // ========== INITIALIZATION ==========
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeDemoData();
+            
+            // Event Listeners
+            document.getElementById('loginForm').addEventListener('submit', handleLogin);
+            document.getElementById('registerForm').addEventListener('submit', handleRegister);
+            document.getElementById('regProfilePic').addEventListener('change', handleRegProfilePic);
+        });
+
+        // ========== DEMO DATA INITIALIZATION ==========
+        function initializeDemoData() {
+            if (profiles.length === 0) {
+                const demoProfiles = [
+                    {
+                        id: 1,
+                        username: "ruedet",
+                        fullName: "รื่นเดช",
+                        age: 24,
+                        gender: "female",
+                        bio: "ชอบท่องเที่ยวกับครอบครัว",
+                        interests: "male",
+                        profilePic: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZmY2YjZiIi8+CiAgPHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtc2l6ZT0iNjAiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+8J+RqTwvdGV4dD4KICA8dGV4dCB4PSI1MCUiIHk9IjgwJSIgZm9udC1zaXplPSIxNiIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPnLru4jkOWGl7j8vdGV4dD4KPC9zdmc+",
+                        likes: 14,
+                        status: "online",
+                        tags: ["ท่องเที่ยว", "ครอบครัว"],
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: 2,
+                        username: "khanthakai",
+                        fullName: "ขันถกาย",
+                        age: 26,
+                        gender: "male",
+                        bio: "หมอกลอง สามารถใจ รักธรรมชาติ",
+                        interests: "female",
+                        profilePic: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjNjY3ZWVhIi8+CiAgPHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtc2l6ZT0iNjAiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+8J+RqDwvdGV4dD4KICA8dGV4dCB4PSI1MCUiIHk9IjgwJSIgZm9udC1zaXplPSIxNiIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPuC4guC4seC4mOC4luC4geC4suC4ojwvdGV4dD4KPC9zdmc+",
+                        likes: 34,
+                        status: "online",
+                        tags: ["แพทย์", "ธรรมชาติ"],
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: 3,
+                        username: "sarin",
+                        fullName: "สารัน",
+                        age: 22,
+                        gender: "female",
+                        bio: "เรียนปริญญาตรี ชื่นชอบดื่มกาแฟ",
+                        interests: "male",
+                        profilePic: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZmZhOGE4Ii8+CiAgPHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtc2l6ZT0iNjAiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+8J+RqTwvdGV4dD4KICA8dGV4dCB4PSI1MCUiIHk9IjgwJSIgZm9udC1zaXplPSIxNiIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPuC4quC4suC4o+C4seC4mjwvdGV4dD4KPC9zdmc+",
+                        likes: 52,
+                        status: "online",
+                        tags: ["นักศึกษา", "กาแฟ"],
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: 4,
+                        username: "alex",
+                        fullName: "อเล็กซ์",
+                        age: 28,
+                        gender: "male",
+                        bio: "โปรแกรมเมอร์ รักเทคโนโลยี",
+                        interests: "female",
+                        profilePic: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjNDI4NTU5Ii8+CiAgPHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtc2l6ZT0iNjAiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+8J+RqDwvdGV4dD4KICA8dGV4dCB4PSI1MCUiIHk9IjgwJSIgZm9udC1zaXplPSIxNiIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPuC4reC5gOC4peC5h+C4geC4qlwvdGV4dD4KPC9zdmc+",
+                        likes: 18,
+                        status: "offline",
+                        tags: ["เทคโนโลยี", "โค้ดดิ้ง"],
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: 5,
+                        username: "nina",
+                        fullName: "นีน่า",
+                        age: 25,
+                        gender: "female",
+                        bio: "ศิลปิน รักงานศิลปะและการวาดภาพ",
+                        interests: "both",
+                        profilePic: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjOUQ1MEJCIi8+CiAgPHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtc2l6ZT0iNjAiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+8J+RqTwvdGV4dD4KICA8dGV4dCB4PSI1MCUiIHk9IjgwJSIgZm9udC1zaXplPSIxNiIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPuC4meC4teC5iOC4meC5iOC4suC4mjwvdGV4dD4KPC9zdmc+",
+                        likes: 89,
+                        status: "online",
+                        tags: ["ศิลปะ", "วาดภาพ"],
+                        createdAt: new Date().toISOString()
+                    }
+                ];
+
+                profiles = demoProfiles;
+                localStorage.setItem('dating_profiles', JSON.stringify(profiles));
+            }
+        }
+
+        // ========== AUTHENTICATION ==========
+        function handleLogin(e) {
+            e.preventDefault();
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value;
+
+            if (!username || !password) {
+                showAlert('loginAlert', 'กรุณากรอกชื่อผู้ใช้และรหัสผ่าน', 'error');
+                return;
+            }
+
+            const user = users.find(u => 
+                (u.username === username || u.email === username) && u.password === password
+            );
+
+            if (user) {
+                currentUser = user;
+                showAlert('loginAlert', '✅ เข้าสู่ระบบสำเร็จ!', 'success');
+                setTimeout(() => {
+                    showApp();
+                    loadProfiles();
+                }, 1000);
+            } else {
+                showAlert('loginAlert', '❌ ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง', 'error');
+            }
+        }
+
+        function handleRegister(e) {
+            e.preventDefault();
+            const fullName = document.getElementById('regFullName').value.trim();
+            const username = document.getElementById('regUsername').value.trim();
+            const age = parseInt(document.getElementById('regAge').value);
+            const gender = document.getElementById('regGender').value;
+            const email = document.getElementById('regEmail').value.trim();
+            const bio = document.getElementById('regBio').value.trim();
+            const interest = document.getElementById('regInterest').value;
+            const password = document.getElementById('regPassword').value;
+            const confirmPassword = document.getElementById('regConfirmPassword').value;
+
+            // Validation
+            if (!fullName || !username || !age || !gender || !email || !bio || !interest || !password) {
+                showAlert('registerAlert', '❌ กรุณากรอกข้อมูลให้ครบถ้วน', 'error');
+                return;
+            }
+
+            if (age < 18 || age > 100) {
+                showAlert('registerAlert', '❌ อายุต้องอยู่ระหว่าง 18-100 ปี', 'error');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showAlert('registerAlert', '❌ รหัสผ่านไม่ตรงกัน', 'error');
+                return;
+            }
+
+            if (password.length < 6) {
+                showAlert('registerAlert', '❌ รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร', 'error');
+                return;
+            }
+
+            // Check if username or email exists
+            if (users.some(u => u.username === username)) {
+                showAlert('registerAlert', '❌ ชื่อผู้ใช้นี้ถูกใช้งานแล้ว', 'error');
+                return;
+            }
+
+            if (users.some(u => u.email === email)) {
+                showAlert('registerAlert', '❌ อีเมลนี้ถูกใช้งานแล้ว', 'error');
+                return;
+            }
+
+            // Create new user
+            const userId = Date.now();
+            const newUser = {
+                id: userId,
+                fullName: fullName,
+                username: username,
+                age: age,
+                gender: gender,
+                email: email,
+                bio: bio,
+                interests: interest,
+                password: password,
+                profilePic: regProfilePicData,
+                createdAt: new Date().toISOString()
+            };
+
+            users.push(newUser);
+            localStorage.setItem('dating_users', JSON.stringify(users));
+
+            // Create profile
+            const newProfile = {
+                id: userId,
+                username: username,
+                fullName: fullName,
+                age: age,
+                gender: gender,
+                bio: bio,
+                interests: interest,
+                profilePic: regProfilePicData,
+                likes: 0,
+                status: "online",
+                tags: ["สมาชิกใหม่"],
+                createdAt: new Date().toISOString()
+            };
+
+            profiles.push(newProfile);
+            localStorage.setItem('dating_profiles', JSON.stringify(profiles));
+
+            showAlert('registerAlert', '✅ สร้างบัญชีสำเร็จ!', 'success');
+
+            setTimeout(() => {
+                showLogin();
+                document.getElementById('registerForm').reset();
+                regProfilePicData = null;
+                document.getElementById('regProfilePreview').innerHTML = '👤';
+            }, 2000);
+        }
+
+        function showLogin() {
+            document.getElementById('loginSection').style.display = 'block';
+            document.getElementById('registerSection').style.display = 'none';
+            document.getElementById('appContainer').classList.remove('active');
+        }
+
+        function showRegister() {
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('registerSection').style.display = 'block';
+            document.getElementById('appContainer').classList.remove('active');
+        }
+
+        function showApp() {
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('registerSection').style.display = 'none';
+            document.getElementById('appContainer').classList.add('active');
+            updateUserInterface();
+        }
+
+        function logout() {
+            if (confirm('ต้องการออกจากระบบหรือไม่?')) {
+                currentUser = null;
+                showLogin();
+                showAlert('loginAlert', 'ออกจากระบบเรียบร้อยแล้ว', 'success');
+            }
+        }
+
+        // ========== PROFILE MANAGEMENT ==========
+        function handleRegProfilePic(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    regProfilePicData = e.target.result;
+                    document.getElementById('regProfilePreview').innerHTML = `<img src="${regProfilePicData}" style="width:100%;height:100%;object-fit:cover;">`;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function updateRegProfileIcon() {
+            if (!regProfilePicData) {
+                const gender = document.getElementById('regGender').value;
+                const icon = gender === 'male' ? '👨' : (gender === 'female' ? '👩' : '👤');
+                document.getElementById('regProfilePreview').innerHTML = icon;
+            }
+        }
+
+        function updateUserInterface() {
+            if (currentUser) {
+                document.getElementById('displayName').textContent = currentUser.fullName;
+                
+                if (currentUser.profilePic) {
+                    document.getElementById('headerAvatar').innerHTML = `<img src="${currentUser.profilePic}" style="width:100%;height:100%;object-fit:cover;">`;
+                } else {
+                    const icon = currentUser.gender === 'male' ? '👨' : (currentUser.gender === 'female' ? '👩' : '👤');
+                    document.getElementById('headerAvatar').innerHTML = icon;
+                }
+            }
+        }
+
+        // ========== PROFILE LOADING AND FILTERING ==========
+        function loadProfiles() {
+            const grid = document.getElementById('profilesGrid');
+            const filteredProfiles = getFilteredProfiles();
+
+            if (filteredProfiles.length === 0) {
+                grid.innerHTML = '<p style="text-align:center;padding:60px;color:#999;grid-column:1/-1;">💔 ไม่พบโปรไฟล์ที่ตรงกับเงื่อนไข<br><small>ลองปรับเงื่อนไขการค้นหาใหม่</small></p>';
+                return;
+            }
+
+            grid.innerHTML = '';
+
+            filteredProfiles.forEach(profile => {
+                if (currentUser && profile.username === currentUser.username) return; // Skip own profile
+
+                const card = document.createElement('div');
+                card.className = 'profile-card';
+
+                const tagsHTML = profile.tags.map(tag => `<span class="profile-tag">${tag}</span>`).join('');
+                const statusClass = profile.status === 'online' ? 'status-online' : 'status-offline';
+                const statusText = profile.status === 'online' ? '🟢 ออนไลน์' : '⭕ ออฟไลน์';
+
+                card.innerHTML = `
+                    <div class="status-indicator ${statusClass}">${statusText}</div>
+                    <div class="like-counter">❤️ ${profile.likes}</div>
+                    
+                    ${profile.profilePic ? 
+                        `<img class="profile-photo" src="${profile.profilePic}" alt="${profile.fullName}">` :
+                        `<div class="profile-photo" style="background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%); display: flex; align-items: center; justify-content: center; font-size: 120px; color: white;">
+                            ${profile.gender === 'male' ? '👨' : (profile.gender === 'female' ? '👩' : '👤')}
+                        </div>`
+                    }
+                    
+                    <div class="profile-info">
+                        <div class="profile-name">
+                            ${profile.fullName} 
+                            <span class="profile-age">${profile.age} ปี</span>
+                        </div>
+                        
+                        <div class="profile-bio">${profile.bio}</div>
+                        
+                        <div class="profile-tags">${tagsHTML}</div>
+                        
+                        <div class="profile-actions">
+                            <button class="action-btn like-btn" onclick="likeProfile(${profile.id})">
+                                ❤️ ถูกใจ
+                            </button>
+                            <button class="action-btn chat-btn" onclick="openChat('${profile.username}')">
+                                💬 แชท
+                            </button>
+                            <button class="action-btn skip-btn" onclick="skipProfile(${profile.id})">
+                                ⏭️ ข้าม
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                grid.appendChild(card);
+            });
+        }
+
+        function getFilteredProfiles() {
+            let filtered = [...profiles];
+
+            // Filter by current user's interests
+            if (currentUser && currentUser.interests !== 'both') {
+                filtered = filtered.filter(profile => profile.gender === currentUser.interests);
+            }
+
+            // Filter by gender
+            const genderFilter = document.getElementById('filterGender').value;
+            if (genderFilter) {
+                filtered = filtered.filter(profile => profile.gender === genderFilter);
+            }
+
+            // Filter by age
+            const ageFilter = document.getElementById('filterAge').value;
+            if (ageFilter) {
+                filtered = filtered.filter(profile => {
+                    switch (ageFilter) {
+                        case '18-25': return profile.age >= 18 && profile.age <= 25;
+                        case '26-35': return profile.age >= 26 && profile.age <= 35;
+                        case '36-45': return profile.age >= 36 && profile.age <= 45;
+                        case '46+': return profile.age >= 46;
+                        default: return true;
+                    }
+                });
+            }
+
+            // Filter by search
+            const searchQuery = document.getElementById('searchBar').value.toLowerCase();
+            if (searchQuery) {
+                filtered = filtered.filter(profile => 
+                    profile.fullName.toLowerCase().includes(searchQuery) ||
+                    profile.bio.toLowerCase().includes(searchQuery)
+                );
+            }
+
+            return filtered;
+        }
+
+        function filterProfiles() {
+            loadProfiles();
+        }
+
+        // ========== PROFILE ACTIONS ==========
+        function likeProfile(profileId) {
+            const profileIndex = profiles.findIndex(p => p.id === profileId);
+            if (profileIndex !== -1) {
+                profiles[profileIndex].likes += 1;
+                localStorage.setItem('dating_profiles', JSON.stringify(profiles));
+                loadProfiles();
+                showAlert('appAlert', '❤️ ส่งถูกใจเรียบร้อยแล้ว!', 'success');
+            }
+        }
+
+        function skipProfile(profileId) {
+            showAlert('appAlert', '⏭️ ข้ามโปรไฟล์แล้ว', 'success');
+        }
+
+        // ========== CHAT SYSTEM ==========
+        function openChat(username) {
+            const profile = profiles.find(p => p.username === username);
+            if (!profile) return;
+
+            currentChatUser = profile;
+            
+            // Update chat header
+            document.getElementById('chatUserName').textContent = profile.fullName;
+            document.getElementById('chatUserStatus').textContent = profile.status === 'online' ? '🟢 ออนไลน์' : '⭕ ออฟไลน์';
+            
+            if (profile.profilePic) {
+                document.getElementById('chatAvatar').innerHTML = `<img src="${profile.profilePic}" style="width:100%;height:100%;object-fit:cover;">`;
+            } else {
+                const icon = profile.gender === 'male' ? '👨' : (profile.gender === 'female' ? '👩' : '👤');
+                document.getElementById('chatAvatar').innerHTML = icon;
+            }
+
+            loadChatMessages(username);
+            document.getElementById('chatModal').classList.add('active');
+            
+            // Focus message input
+            setTimeout(() => {
+                document.getElementById('messageInput').focus();
+            }, 100);
+        }
+
+        function closeChat() {
+            document.getElementById('chatModal').classList.remove('active');
+            currentChatUser = null;
+        }
+
+        function loadChatMessages(username) {
+            const chatKey = getChatKey(currentUser.username, username);
+            const messages = chats[chatKey] || [];
+            const container = document.getElementById('chatMessages');
+            
+            container.innerHTML = '';
+
+            if (messages.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #999;">
+                        💬 เริ่มการสนทนาใหม่กันเถอะ!<br>
+                        <small>พิมพ์ข้อความแรกของคุณ</small>
+                    </div>
+                `;
+                return;
+            }
+
+            messages.forEach(message => {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${message.sender === currentUser.username ? 'own' : ''}`;
+
+                const senderProfile = message.sender === currentUser.username ? currentUser : currentChatUser;
+                const avatarContent = senderProfile.profilePic ? 
+                    `<img src="${senderProfile.profilePic}" style="width:100%;height:100%;object-fit:cover;">` :
+                    (senderProfile.gender === 'male' ? '👨' : (senderProfile.gender === 'female' ? '👩' : '👤'));
+
+                messageDiv.innerHTML = `
+                    <div class="message-avatar">${avatarContent}</div>
+                    <div>
+                        <div class="message-content">${message.text}</div>
+                        <div class="message-time">${new Date(message.timestamp).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' })}</div>
+                    </div>
+                `;
+
+                container.appendChild(messageDiv);
+            });
+
+            // Scroll to bottom
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const messageText = input.value.trim();
+
+            if (!messageText || !currentChatUser) return;
+
+            const chatKey = getChatKey(currentUser.username, currentChatUser.username);
+            
+            if (!chats[chatKey]) {
+                chats[chatKey] = [];
+            }
+
+            const message = {
+                id: Date.now(),
+                sender: currentUser.username,
+                receiver: currentChatUser.username,
+                text: messageText,
+                timestamp: new Date().toISOString()
+            };
+
+            chats[chatKey].push(message);
+            localStorage.setItem('dating_chats', JSON.stringify(chats));
+
+            input.value = '';
+            loadChatMessages(currentChatUser.username);
+
+            // Show notification
+            showAlert('appAlert', '📤 ส่งข้อความแล้ว!', 'success');
+        }
+
+        function handleEnterMessage(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        }
+
+        function getChatKey(user1, user2) {
+            return [user1, user2].sort().join('_');
+        }
+
+        // ========== UTILITY FUNCTIONS ==========
+        function showAlert(containerId, message, type) {
+            const alert = document.getElementById(containerId);
+            alert.textContent = message;
+            alert.className = `alert ${type} show`;
+
+            setTimeout(() => {
+                alert.classList.remove('show');
+            }, 4000);
+        }
+
+        function openProfile() {
+            showAlert('appAlert', '⚙️ กำลังเปิดหน้าแก้ไขโปรไฟล์...', 'success');
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('chatModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeChat();
+            }
+        });
+
+        // Demo login for testing
+        function demoLogin() {
+            document.getElementById('loginUsername').value = 'demo';
+            document.getElementById('loginPassword').value = 'demo123';
+        }
+    </script>
+</body>
+</html>

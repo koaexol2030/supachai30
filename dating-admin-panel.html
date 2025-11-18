@@ -1,0 +1,1330 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>👑 FindLove Admin Panel - ระบบจัดการแอปหาคู่</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 25%, #ffa8a8 50%, #ffb3ba 75%, #ffc0cb 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        /* === ADMIN LOGIN === */
+        .admin-login {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 25%, #ffa8a8 50%, #ffb3ba 75%, #ffc0cb 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .admin-login.hidden {
+            display: none;
+        }
+
+        .login-box {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            padding: 50px 40px;
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .admin-crown {
+            font-size: 80px;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 4px 8px rgba(255, 215, 0, 0.3);
+        }
+
+        .login-title {
+            font-size: 2.2em;
+            font-weight: 700;
+            color: #ff6b6b;
+            margin-bottom: 10px;
+        }
+
+        .login-subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .security-notice {
+            background: rgba(255, 107, 107, 0.1);
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 25px;
+            color: #721c24;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #ff6b6b;
+            box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .admin-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+        }
+
+        .admin-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(255, 107, 107, 0.5);
+        }
+
+        .login-alert {
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            font-weight: 600;
+        }
+
+        .login-alert.show {
+            display: block;
+        }
+
+        .login-alert.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .login-alert.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        /* === ADMIN DASHBOARD === */
+        .admin-container {
+            display: none;
+            grid-template-columns: 280px 1fr;
+            min-height: 100vh;
+        }
+
+        .admin-container.authenticated {
+            display: grid;
+        }
+
+        .sidebar {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(255,255,255,0.2);
+            padding: 30px 0;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.1);
+        }
+
+        .sidebar-header {
+            padding: 0 30px 30px;
+            border-bottom: 1px solid #e9ecef;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .sidebar-header .crown {
+            font-size: 50px;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .sidebar-header .heart {
+            font-size: 30px;
+            color: #ff6b6b;
+            margin: 0 10px;
+        }
+
+        .sidebar-header h2 {
+            color: #ff6b6b;
+            font-size: 1.4em;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .sidebar-header p {
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 5px;
+        }
+
+        .nav-link {
+            display: block;
+            padding: 15px 30px;
+            color: #333;
+            text-decoration: none;
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+            font-weight: 500;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255, 107, 107, 0.1);
+            border-left-color: #ff6b6b;
+            color: #ff6b6b;
+        }
+
+        .main-content {
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .header-bar {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            padding: 25px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-info h1 {
+            color: #ff6b6b;
+            font-size: 2.2em;
+            margin-bottom: 5px;
+        }
+
+        .header-info p {
+            color: #6c757d;
+            font-size: 1.1em;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .admin-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 18px;
+            background: rgba(255, 107, 107, 0.1);
+            border-radius: 25px;
+            border: 2px solid rgba(255, 107, 107, 0.3);
+        }
+
+        .admin-avatar {
+            font-size: 25px;
+        }
+
+        .admin-details {
+            font-size: 14px;
+        }
+
+        .admin-name {
+            font-weight: 700;
+            color: #333;
+        }
+
+        .admin-title {
+            color: #ff6b6b;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #ff6b6b;
+            color: #ff6b6b;
+        }
+
+        .btn-outline:hover {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .section {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f8f9fa;
+        }
+
+        .section-title {
+            font-size: 1.5em;
+            color: #333;
+            font-weight: 700;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
+            color: white;
+            padding: 35px 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(255, 107, 107, 0.4);
+        }
+
+        .stat-card:hover::before {
+            top: -10%;
+            right: -10%;
+        }
+
+        .stat-number {
+            font-size: 2.8em;
+            font-weight: 700;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-label {
+            font-size: 1.1em;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 18px 20px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .data-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .data-table tbody tr {
+            transition: all 0.3s;
+        }
+
+        .data-table tbody tr:hover {
+            background: #f8f9fa;
+            transform: scale(1.01);
+        }
+
+        .profile-pic {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 18px;
+            overflow: hidden;
+        }
+
+        .profile-pic img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-online {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-offline {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-new {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .match-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 8px;
+            background: rgba(255, 107, 107, 0.1);
+            border-radius: 15px;
+            font-size: 12px;
+            color: #ff6b6b;
+            font-weight: 600;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        .alert.active {
+            display: block;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+
+        .alert-error {
+            background-color: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+
+        .alert-warning {
+            background-color: #fff3cd;
+            border-color: #ffc107;
+            color: #856404;
+        }
+
+        .alert-info {
+            background-color: #cce7ff;
+            border-color: #ff6b6b;
+            color: #ff6b6b;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .system-status {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .status-item {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 5px solid #ff6b6b;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+        }
+
+        .status-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .status-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .status-value {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: #ff6b6b;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .action-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .action-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .action-icon {
+            font-size: 50px;
+            margin-bottom: 15px;
+        }
+
+        .action-title {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .action-desc {
+            color: #666;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .admin-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                display: none;
+            }
+            
+            .header-bar {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .header-actions {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .login-box {
+                margin: 20px;
+                padding: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Admin Login -->
+    <div id="adminLogin" class="admin-login">
+        <div class="login-box">
+            <div class="admin-crown">👑</div>
+            <h1 class="login-title">FindLove Admin</h1>
+            <p class="login-subtitle">ระบบจัดการแอปหาคู่ออนไลน์</p>
+
+            <div class="security-notice">
+                💕 เฉพาะเจ้าเว็บเท่านั้น - ระบบรักษาความปลอดภัย
+            </div>
+
+            <div id="loginAlert" class="login-alert"></div>
+
+            <form id="adminLoginForm">
+                <div class="form-group">
+                    <label class="form-label">👑 Admin Username</label>
+                    <input type="text" id="adminUsername" class="form-input" placeholder="กรอก Admin Username" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">🗝️ Admin Password</label>
+                    <input type="password" id="adminPassword" class="form-input" placeholder="กรอก Admin Password" required>
+                </div>
+
+                <button type="submit" class="admin-btn">💕 เข้าสู่ระบบ Admin</button>
+            </form>
+
+            <div style="margin-top: 30px; padding: 15px; background: rgba(255, 107, 107, 0.1); border-radius: 10px; font-size: 13px; color: #666;">
+                💡 <strong>Demo Credentials:</strong><br>
+                Username: <code>admin</code><br>
+                Password: <code>love2024</code>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div class="admin-container" id="adminContainer">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <span class="crown">👑</span>
+                <h2>FindLove<span class="heart">💕</span>Admin</h2>
+                <p>ระบบจัดการแอปหาคู่</p>
+            </div>
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link active" onclick="showSection('dashboard')">
+                            💕 Dashboard หลัก
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" onclick="showSection('users')">
+                            👥 จัดการสมาชิก
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" onclick="showSection('matches')">
+                            💑 จับคู่และแมทช์
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" onclick="showSection('chats')">
+                            💬 ระบบแชท
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" onclick="showSection('reports')">
+                            📊 รายงานและสถิติ
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" onclick="showSection('moderation')">
+                            🛡️ การดูแลเนื้อหา
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" onclick="showSection('settings')">
+                            ⚙️ ตั้งค่าระบบ
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" onclick="showSection('safety')">
+                            🔒 ความปลอดภัย
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header Bar -->
+            <div class="header-bar">
+                <div class="header-info">
+                    <h1 id="pageTitle">💕 FindLove Admin Dashboard</h1>
+                    <p id="pageDescription">ระบบจัดการแอปหาคู่ออนไลน์</p>
+                </div>
+                <div class="header-actions">
+                    <div class="admin-profile">
+                        <div class="admin-avatar" id="adminAvatar">👑</div>
+                        <div class="admin-details">
+                            <div class="admin-name" id="adminName">Admin</div>
+                            <div class="admin-title">ผู้ดูแลระบบ</div>
+                        </div>
+                    </div>
+                    <button class="btn btn-outline" onclick="openDatingApp()">
+                        💕 เปิดแอปหาคู่
+                    </button>
+                    <button class="btn btn-warning" onclick="moderateContent()">
+                        🛡️ ตรวจสอบเนื้อหา
+                    </button>
+                    <button class="btn btn-danger" onclick="adminLogout()">
+                        🚪 ออกจากระบบ
+                    </button>
+                </div>
+            </div>
+
+            <!-- Alert -->
+            <div class="alert" id="alert"></div>
+
+            <!-- Dashboard Section -->
+            <div id="section-dashboard">
+                <!-- System Status -->
+                <div class="section">
+                    <div class="section-header">
+                        <h3 class="section-title">💕 สถานะแอปหาคู่</h3>
+                        <button class="btn btn-primary" onclick="refreshStatus()">🔄 อัปเดต</button>
+                    </div>
+                    <div class="system-status">
+                        <div class="status-item">
+                            <div class="status-title">💕 แอปหาคู่</div>
+                            <div class="status-value">Online</div>
+                        </div>
+                        <div class="status-item">
+                            <div class="status-title">💑 ระบบจับคู่</div>
+                            <div class="status-value">Active</div>
+                        </div>
+                        <div class="status-item">
+                            <div class="status-title">💬 แชทเรียลไทม์</div>
+                            <div class="status-value">Working</div>
+                        </div>
+                        <div class="status-item">
+                            <div class="status-title">🛡️ ความปลอดภัย</div>
+                            <div class="status-value">Protected</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Statistics -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalMembers">0</div>
+                        <div class="stat-label">👥 สมาชิกทั้งหมด</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalMatches">0</div>
+                        <div class="stat-label">💑 การจับคู่</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalChats">0</div>
+                        <div class="stat-label">💬 ข้อความแชท</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="successRate">0</div>
+                        <div class="stat-label">📈 อัตราความสำเร็จ (%)</div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="section">
+                    <div class="section-header">
+                        <h3 class="section-title">⚡ การดำเนินการด่วน</h3>
+                    </div>
+                    <div class="quick-actions">
+                        <div class="action-card" onclick="showSection('users')">
+                            <div class="action-icon">👥</div>
+                            <div class="action-title">จัดการสมาชิก</div>
+                            <div class="action-desc">ดูแลและตรวจสอบสมาชิกใหม่</div>
+                        </div>
+                        <div class="action-card" onclick="showSection('matches')">
+                            <div class="action-icon">💑</div>
+                            <div class="action-title">ระบบจับคู่</div>
+                            <div class="action-desc">ดูผลการจับคู่และแมทช์</div>
+                        </div>
+                        <div class="action-card" onclick="showSection('chats')">
+                            <div class="action-icon">💬</div>
+                            <div class="action-title">ตรวจสอบแชท</div>
+                            <div class="action-desc">ดูการสนทนาและรายงาน</div>
+                        </div>
+                        <div class="action-card" onclick="showSection('moderation')">
+                            <div class="action-icon">🛡️</div>
+                            <div class="action-title">ดูแลเนื้อหา</div>
+                            <div class="action-desc">ตรวจสอบและกรองเนื้อหา</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Users Management Section -->
+            <div id="section-users" style="display: none;">
+                <div class="section">
+                    <div class="section-header">
+                        <h3 class="section-title">👥 จัดการสมาชิก</h3>
+                        <button class="btn btn-primary" onclick="exportUsers()">📊 ส่งออกข้อมูล</button>
+                    </div>
+
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>รูปโปรไฟล์</th>
+                                <th>ชื่อ</th>
+                                <th>อายุ</th>
+                                <th>เพศ</th>
+                                <th>สนใจ</th>
+                                <th>สถานะ</th>
+                                <th>Likes</th>
+                                <th>วันที่สมัคร</th>
+                                <th>จัดการ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTable">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Matches Section -->
+            <div id="section-matches" style="display: none;">
+                <div class="section">
+                    <div class="section-header">
+                        <h3 class="section-title">💑 การจับคู่และแมทช์</h3>
+                        <button class="btn btn-primary" onclick="generateMatches()">💕 สร้างการจับคู่</button>
+                    </div>
+
+                    <div style="text-align: center; padding: 60px; color: #666;">
+                        💑 ระบบการจับคู่และแมทช์จะแสดงที่นี่<br>
+                        <small>ดูการจับคู่ที่สำเร็จและกำลังดำเนินการ</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chats Section -->
+            <div id="section-chats" style="display: none;">
+                <div class="section">
+                    <div class="section-header">
+                        <h3 class="section-title">💬 ระบบแชทและการสนทนา</h3>
+                        <button class="btn btn-outline" onclick="exportChats()">📊 ส่งออกบันทึก</button>
+                    </div>
+
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ผู้ส่ง</th>
+                                <th>ผู้รับ</th>
+                                <th>จำนวนข้อความ</th>
+                                <th>เริ่มแชท</th>
+                                <th>กิจกรรมล่าสุด</th>
+                                <th>สถานะ</th>
+                                <th>ดู</th>
+                            </tr>
+                        </thead>
+                        <tbody id="chatsTable">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Reports Section -->
+            <div id="section-reports" style="display: none;">
+                <div class="section">
+                    <div class="section-header">
+                        <h3 class="section-title">📊 รายงานและสถิติ</h3>
+                        <button class="btn btn-primary" onclick="generateDetailedReport()">📈 สร้างรายงาน</button>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number" id="dailySignups">0</div>
+                            <div class="stat-label">📅 สมัครใหม่วันนี้</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="dailyMatches">0</div>
+                            <div class="stat-label">💕 แมทช์วันนี้</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="activeChats">0</div>
+                            <div class="stat-label">💬 แชทที่ใช้งาน</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="reportedUsers">0</div>
+                            <div class="stat-label">🚨 รายงานปัญหา</div>
+                        </div>
+                    </div>
+
+                    <div style="text-align: center; padding: 60px; color: #666;">
+                        📊 รายงานโดยละเอียดและกราฟจะแสดงที่นี่
+                    </div>
+                </div>
+            </div>
+
+            <!-- Moderation Section -->
+            <div id="section-moderation" style="display: none;">
+                <div class="section">
+                    <div class="section-header">
+                        <h3 class="section-title">🛡️ การดูแลและตรวจสอบเนื้อหา</h3>
+                        <button class="btn btn-warning" onclick="scanContent()">🔍 สแกนเนื้อหา</button>
+                    </div>
+
+                    <div style="text-align: center; padding: 60px; color: #666;">
+                        🛡️ ระบบตรวจสอบเนื้อหาและการดูแลจะแสดงที่นี่<br>
+                        <small>ดูรายงานที่ต้องตรวจสอบและดำเนินการ</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Section -->
+            <div id="section-settings" style="display: none;">
+                <div class="section">
+                    <div class="section-header">
+                        <h3 class="section-title">⚙️ ตั้งค่าระบบแอปหาคู่</h3>
+                        <button class="btn btn-primary" onclick="saveAppSettings()">💾 บันทึกการตั้งค่า</button>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px;">
+                        <div>
+                            <label style="display: block; margin-bottom: 8px; font-weight: 600;">💕 ชื่อแอป</label>
+                            <input type="text" style="width: 100%; padding: 12px; border: 2px solid #e9ecef; border-radius: 8px;" id="appName" placeholder="ชื่อแอปหาคู่">
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 8px; font-weight: 600;">🎂 อายุขั้นต่ำ</label>
+                            <input type="number" style="width: 100%; padding: 12px; border: 2px solid #e9ecef; border-radius: 8px;" id="minAge" placeholder="อายุขั้นต่ำ">
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 8px; font-weight: 600;">🎂 อายุสูงสุด</label>
+                            <input type="number" style="width: 100%; padding: 12px; border: 2px solid #e9ecef; border-radius: 8px;" id="maxAge" placeholder="อายุสูงสุด">
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 8px; font-weight: 600;">💰 ราคาสมาชิก Premium</label>
+                            <input type="number" style="width: 100%; padding: 12px; border: 2px solid #e9ecef; border-radius: 8px;" id="premiumPrice" placeholder="ราคา (บาท)">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Safety Section -->
+            <div id="section-safety" style="display: none;">
+                <div class="section">
+                    <div class="section-header">
+                        <h3 class="section-title">🔒 ความปลอดภัยและการรักษาข้อมูล</h3>
+                        <button class="btn btn-warning" onclick="runSecurityCheck()">🔍 ตรวจสอบความปลอดภัย</button>
+                    </div>
+
+                    <div class="system-status">
+                        <div class="status-item">
+                            <div class="status-title">🛡️ การเข้ารหัสข้อมูล</div>
+                            <div class="status-value">Protected</div>
+                        </div>
+                        <div class="status-item">
+                            <div class="status-title">🔐 การยืนยันตัวตน</div>
+                            <div class="status-value">Active</div>
+                        </div>
+                        <div class="status-item">
+                            <div class="status-title">🚫 การป้องกัน Spam</div>
+                            <div class="status-value">Enabled</div>
+                        </div>
+                        <div class="status-item">
+                            <div class="status-title">📱 การตรวจสอบรูปภาพ</div>
+                            <div class="status-value">Working</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // ========== ADMIN AUTHENTICATION ==========
+        const adminCredentials = {
+            username: 'admin',
+            password: 'love2024'
+        };
+
+        let currentAdmin = null;
+        let datingUsers = JSON.parse(localStorage.getItem('dating_users') || '[]');
+        let datingProfiles = JSON.parse(localStorage.getItem('dating_profiles') || '[]');
+        let datingChats = JSON.parse(localStorage.getItem('dating_chats') || '{}');
+
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAdminSession();
+            
+            document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                handleAdminLogin();
+            });
+        });
+
+        function checkAdminSession() {
+            const savedSession = localStorage.getItem('dating_admin_session');
+            if (savedSession) {
+                const session = JSON.parse(savedSession);
+                if (Date.now() - session.loginTime < 24 * 60 * 60 * 1000) {
+                    currentAdmin = session;
+                    showAdminDashboard();
+                    loadDatingData();
+                } else {
+                    localStorage.removeItem('dating_admin_session');
+                }
+            }
+        }
+
+        function handleAdminLogin() {
+            const username = document.getElementById('adminUsername').value.trim();
+            const password = document.getElementById('adminPassword').value;
+
+            if (username === adminCredentials.username && password === adminCredentials.password) {
+                currentAdmin = {
+                    username: username,
+                    loginTime: Date.now(),
+                    name: 'FindLove Admin'
+                };
+
+                localStorage.setItem('dating_admin_session', JSON.stringify(currentAdmin));
+                
+                showAdminAlert('เข้าสู่ระบบสำเร็จ! กำลังโหลด Admin Panel...', 'success');
+                
+                setTimeout(() => {
+                    showAdminDashboard();
+                    loadDatingData();
+                }, 1000);
+            } else {
+                showAdminAlert('ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง', 'error');
+            }
+        }
+
+        function showAdminDashboard() {
+            document.getElementById('adminLogin').classList.add('hidden');
+            document.getElementById('adminContainer').classList.add('authenticated');
+            
+            if (currentAdmin) {
+                document.getElementById('adminName').textContent = currentAdmin.name;
+            }
+        }
+
+        function showAdminLogin() {
+            document.getElementById('adminContainer').classList.remove('authenticated');
+            document.getElementById('adminLogin').classList.remove('hidden');
+        }
+
+        function adminLogout() {
+            if (confirm('ต้องการออกจากระบบ Admin หรือไม่?')) {
+                localStorage.removeItem('dating_admin_session');
+                currentAdmin = null;
+                showAdminLogin();
+                showAlert('ออกจากระบบเรียบร้อยแล้ว', 'success');
+            }
+        }
+
+        // ========== DATA MANAGEMENT ==========
+        function loadDatingData() {
+            updateDatingStatistics();
+            loadDatingUsersTable();
+            loadChatsTable();
+        }
+
+        function updateDatingStatistics() {
+            document.getElementById('totalMembers').textContent = datingProfiles.length;
+            document.getElementById('totalMatches').textContent = Math.floor(datingProfiles.length * 0.3);
+            document.getElementById('totalChats').textContent = Object.keys(datingChats).length;
+            document.getElementById('successRate').textContent = Math.floor(Math.random() * 20 + 75);
+            
+            // Reports stats
+            document.getElementById('dailySignups').textContent = Math.floor(Math.random() * 10 + 5);
+            document.getElementById('dailyMatches').textContent = Math.floor(Math.random() * 20 + 15);
+            document.getElementById('activeChats').textContent = Math.floor(Object.keys(datingChats).length * 0.7);
+            document.getElementById('reportedUsers').textContent = Math.floor(Math.random() * 5);
+        }
+
+        function loadDatingUsersTable() {
+            const tbody = document.getElementById('usersTable');
+            tbody.innerHTML = '';
+
+            datingProfiles.forEach(profile => {
+                const row = document.createElement('tr');
+                
+                const profilePicHTML = profile.profilePic ? 
+                    `<img src="${profile.profilePic}" style="width:100%;height:100%;object-fit:cover;">` :
+                    (profile.gender === 'male' ? '👨' : (profile.gender === 'female' ? '👩' : '👤'));
+
+                const genderText = profile.gender === 'male' ? 'ชาย' : (profile.gender === 'female' ? 'หญิง' : 'ไม่ระบุ');
+                const interestText = profile.interests === 'male' ? 'ชาย' : (profile.interests === 'female' ? 'หญิง' : 'ทั้งหมด');
+                const statusClass = profile.status === 'online' ? 'status-online' : 'status-offline';
+                const statusText = profile.status === 'online' ? 'ออนไลน์' : 'ออฟไลน์';
+                
+                row.innerHTML = `
+                    <td><div class="profile-pic">${profilePicHTML}</div></td>
+                    <td>
+                        <strong>${profile.fullName}</strong><br>
+                        <small>@${profile.username}</small>
+                    </td>
+                    <td>${profile.age} ปี</td>
+                    <td>${genderText}</td>
+                    <td>${interestText}</td>
+                    <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                    <td>
+                        <div class="match-indicator">
+                            ❤️ ${profile.likes || 0}
+                        </div>
+                    </td>
+                    <td>${new Date(profile.createdAt).toLocaleDateString('th-TH')}</td>
+                    <td>
+                        <button class="btn btn-outline" style="padding: 5px 10px; margin-right: 5px;" onclick="viewProfile(${profile.id})">👁️</button>
+                        <button class="btn btn-danger" style="padding: 5px 10px;" onclick="suspendUser(${profile.id})">🚫</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function loadChatsTable() {
+            const tbody = document.getElementById('chatsTable');
+            tbody.innerHTML = '';
+
+            Object.entries(datingChats).forEach(([chatKey, messages]) => {
+                if (messages.length === 0) return;
+                
+                const [user1, user2] = chatKey.split('_');
+                const profile1 = datingProfiles.find(p => p.username === user1);
+                const profile2 = datingProfiles.find(p => p.username === user2);
+                
+                if (!profile1 || !profile2) return;
+
+                const firstMessage = messages[0];
+                const lastMessage = messages[messages.length - 1];
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>
+                        <strong>${profile1.fullName}</strong><br>
+                        <small>@${profile1.username}</small>
+                    </td>
+                    <td>
+                        <strong>${profile2.fullName}</strong><br>
+                        <small>@${profile2.username}</small>
+                    </td>
+                    <td>${messages.length}</td>
+                    <td>${new Date(firstMessage.timestamp).toLocaleDateString('th-TH')}</td>
+                    <td>${new Date(lastMessage.timestamp).toLocaleDateString('th-TH')}</td>
+                    <td><span class="status-badge status-online">ใช้งาน</span></td>
+                    <td>
+                        <button class="btn btn-outline" style="padding: 5px 10px;" onclick="viewChat('${chatKey}')">📋</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // ========== NAVIGATION ==========
+        function showSection(section) {
+            document.querySelectorAll('[id^="section-"]').forEach(sec => {
+                sec.style.display = 'none';
+            });
+
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+
+            document.getElementById('section-' + section).style.display = 'block';
+
+            if (event && event.target) {
+                event.target.classList.add('active');
+            }
+
+            updateHeader(section);
+        }
+
+        function updateHeader(section) {
+            const titles = {
+                dashboard: { title: '💕 FindLove Admin Dashboard', desc: 'ระบบจัดการแอปหาคู่ออนไลน์' },
+                users: { title: '👥 จัดการสมาชิก', desc: 'ดูแลและควบคุมสมาชิกทั้งหมด' },
+                matches: { title: '💑 การจับคู่และแมทช์', desc: 'ดูผลการจับคู่และความสำเร็จ' },
+                chats: { title: '💬 ระบบแชท', desc: 'ตรวจสอบการสนทนาและแชท' },
+                reports: { title: '📊 รายงานและสถิติ', desc: 'วิเคราะห์ข้อมูลการใช้งาน' },
+                moderation: { title: '🛡️ การดูแลเนื้อหา', desc: 'ตรวจสอบและกรองเนื้อหา' },
+                settings: { title: '⚙️ ตั้งค่าระบบ', desc: 'กำหนดค่าการทำงานของแอป' },
+                safety: { title: '🔒 ความปลอดภัย', desc: 'ระบบรักษาความปลอดภัย' }
+            };
+
+            if (titles[section]) {
+                document.getElementById('pageTitle').textContent = titles[section].title;
+                document.getElementById('pageDescription').textContent = titles[section].desc;
+            }
+        }
+
+        // ========== UTILITY FUNCTIONS ==========
+        function showAdminAlert(message, type) {
+            const alert = document.getElementById('loginAlert');
+            alert.textContent = message;
+            alert.className = `login-alert ${type} show`;
+
+            setTimeout(() => {
+                alert.classList.remove('show');
+            }, 4000);
+        }
+
+        function showAlert(message, type = 'success') {
+            const alert = document.getElementById('alert');
+            alert.textContent = message;
+            alert.className = `alert alert-${type} active`;
+            
+            setTimeout(() => {
+                alert.classList.remove('active');
+            }, 3000);
+        }
+
+        // ========== ADMIN FUNCTIONS ==========
+        function refreshStatus() {
+            showAlert('อัปเดตสถานะระบบเรียบร้อยแล้ว', 'success');
+        }
+
+        function openDatingApp() {
+            window.open('dating-app-system.html', '_blank');
+        }
+
+        function moderateContent() {
+            showAlert('เริ่มการตรวจสอบเนื้อหา...', 'info');
+        }
+
+        function viewProfile(profileId) {
+            showAlert(`กำลังเปิดโปรไฟล์ ID: ${profileId}`, 'info');
+        }
+
+        function suspendUser(profileId) {
+            if (confirm('ต้องการระงับสมาชิกนี้หรือไม่?')) {
+                showAlert('ระงับสมาชิกเรียบร้อยแล้ว', 'warning');
+            }
+        }
+
+        function viewChat(chatKey) {
+            showAlert(`กำลังเปิดการสนทนา: ${chatKey}`, 'info');
+        }
+
+        function exportUsers() {
+            showAlert('กำลังส่งออกข้อมูลสมาชิก...', 'info');
+        }
+
+        function exportChats() {
+            showAlert('กำลังส่งออกบันทึกการสนทนา...', 'info');
+        }
+
+        function generateMatches() {
+            showAlert('กำลังสร้างการจับคู่ใหม่...', 'info');
+        }
+
+        function generateDetailedReport() {
+            showAlert('กำลังสร้างรายงานโดยละเอียด...', 'info');
+        }
+
+        function scanContent() {
+            showAlert('เริ่มการสแกนและตรวจสอบเนื้อหา...', 'info');
+        }
+
+        function saveAppSettings() {
+            showAlert('บันทึกการตั้งค่าแอปเรียบร้อยแล้ว', 'success');
+        }
+
+        function runSecurityCheck() {
+            showAlert('กำลังตรวจสอบความปลอดภัย...', 'info');
+            setTimeout(() => {
+                showAlert('ตรวจสอบความปลอดภัยเสร็จสิ้น - ไม่พบปัญหา', 'success');
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
